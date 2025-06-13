@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @Description: custom_crm_photo_type
@@ -123,6 +120,19 @@ public class CustomCrmPhotoTypeServiceImpl extends ServiceImpl<CustomCrmPhotoTyp
         return result;
     }
 
+    @Override
+    public List<CustomCrmPhotoTypeTree> listTreeEnabled() {
+        List<CustomCrmPhotoType> topEnabledTypes = list(new LambdaQueryWrapper<CustomCrmPhotoType>().eq(CustomCrmPhotoType::getTypeLevel, 0).eq(CustomCrmPhotoType::getStatus, 1));
+        List<CustomCrmPhotoTypeTree> topEnabledTypeTrees = BeanUtil.copyToList(topEnabledTypes, CustomCrmPhotoTypeTree.class);
+        List<CustomCrmPhotoTypeTree> results = topEnabledTypeTrees.stream().filter(Objects::nonNull).map(customCrmPhotoTypeTree -> {
+            if (!customCrmPhotoTypeTree.getIsLeaf()) {
+                findAllEnabledChildren(customCrmPhotoTypeTree);
+            }
+            return customCrmPhotoTypeTree;
+        }).toList();
+        return results;
+    }
+
     private CustomCrmPhotoTypeTree findAllChildren(CustomCrmPhotoTypeTree crmPhotoTypeTree) {
         if (Objects.isNull(crmPhotoTypeTree)){
             return crmPhotoTypeTree;
@@ -132,6 +142,29 @@ public class CustomCrmPhotoTypeServiceImpl extends ServiceImpl<CustomCrmPhotoTyp
             if (CollUtil.isNotEmpty(children)){
                 for (CustomCrmPhotoTypeTree child : children) {
                     findAllChildren(child);
+                }
+                crmPhotoTypeTree.setHasChildren(true);
+                crmPhotoTypeTree.setChildren(children);
+            }
+        }
+        return crmPhotoTypeTree;
+    }
+
+
+    private CustomCrmPhotoTypeTree findAllEnabledChildren(CustomCrmPhotoTypeTree crmPhotoTypeTree) {
+        if (Objects.isNull(crmPhotoTypeTree)){
+            return crmPhotoTypeTree;
+        }
+        if (!Boolean.TRUE.equals(crmPhotoTypeTree.getIsLeaf())){
+            List<CustomCrmPhotoTypeTree> children = listSub(crmPhotoTypeTree.getId());
+            //筛选出可用的子级
+            children = Optional.ofNullable(children).map(lis->{
+                return lis.stream().filter(child -> Objects.equals(child.getStatus(), "1")).toList();
+            }).orElse(new ArrayList<>());
+            //保存子列表
+            if (CollUtil.isNotEmpty(children)){
+                for (CustomCrmPhotoTypeTree child : children) {
+                    findAllEnabledChildren(child);
                 }
                 crmPhotoTypeTree.setHasChildren(true);
                 crmPhotoTypeTree.setChildren(children);

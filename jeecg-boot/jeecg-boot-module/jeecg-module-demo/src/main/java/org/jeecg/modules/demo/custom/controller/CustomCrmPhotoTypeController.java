@@ -96,6 +96,13 @@ public class CustomCrmPhotoTypeController extends JeecgController<CustomCrmPhoto
 		 return Result.OK(treeAll);
 	 }
 
+	 @Operation(summary="custom_crm_photo_type-分页列表查询")
+	 @GetMapping(value = "/listTreeEnabled")
+	 public Result<List<CustomCrmPhotoTypeTree>> listTreeEnabled(){
+		 List<CustomCrmPhotoTypeTree> treeAll = customCrmPhotoTypeService.listTreeEnabled();
+		 return Result.OK(treeAll);
+	 }
+
 
 	 @Operation(summary="custom_crm_photo_type-异步树加载查询")
 	 @GetMapping(value = "/listSub")

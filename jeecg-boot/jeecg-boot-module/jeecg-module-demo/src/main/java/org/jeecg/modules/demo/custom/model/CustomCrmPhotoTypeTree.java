@@ -1,7 +1,11 @@
 package org.jeecg.modules.demo.custom.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.jeecg.modules.demo.custom.entity.CustomCrmPhotoType;
+import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -39,19 +43,25 @@ public class CustomCrmPhotoTypeTree implements Serializable {
     /** 描述 */
     private String description;
 
-    /** 创建人 */
+    /**创建人*/
+    @Schema(description = "创建人")
     private String createBy;
-
-    /** 创建时间 */
+    /**创建时间*/
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Schema(description = "创建时间")
     private Date createTime;
-
-    /** 更新人 */
+    /**更新人*/
+    @Schema(description = "更新人")
     private String updateBy;
-
-    /** 更新时间 */
+    /**更新时间*/
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Schema(description = "更新时间")
     private Date updateTime;
-
-    /** 租户ID */
+    /**租户ID*/
+    @Excel(name = "租户ID", width = 15)
+    @Schema(description = "租户ID")
     private Integer tenantId;
 
     /** 子节点列表 */
