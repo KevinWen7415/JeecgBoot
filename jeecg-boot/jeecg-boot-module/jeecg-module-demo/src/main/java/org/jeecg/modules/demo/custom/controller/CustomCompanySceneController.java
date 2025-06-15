@@ -104,6 +104,15 @@ public class CustomCompanySceneController extends JeecgController<CustomCompanyS
 		customCompanySceneService.updateById(customCompanyScene);
 		return Result.OK("编辑成功!");
 	}
+
+	 @AutoLog(value = "custom_company_scene-编辑")
+	 @Operation(summary="custom_company_scene-编辑")
+	 @RequiresPermissions("custom:custom_company_scene:edit")
+	 @RequestMapping(value = "/uploadPhoto", method = {RequestMethod.PUT,RequestMethod.POST})
+	 public Result<String> uploadPhoto(@RequestBody CustomCompanyScene customCompanyScene) {
+		 customCompanySceneService.uploadPhoto(customCompanyScene);
+		 return Result.OK("上传成功!");
+	 }
 	
 	/**
 	 *   通过id删除

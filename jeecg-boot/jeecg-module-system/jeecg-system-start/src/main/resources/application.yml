@@ -3,3 +3,8 @@ spring:
     name: jeecg-system
   profiles:
     active: '@profile.name@'
+
+
+custom:
+  company-scene:
+    photo-shared-path: D:\\test-shared

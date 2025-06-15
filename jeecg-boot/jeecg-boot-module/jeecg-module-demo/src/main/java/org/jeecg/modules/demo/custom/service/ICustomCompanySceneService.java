@@ -11,4 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICustomCompanySceneService extends IService<CustomCompanyScene> {
 
+    Boolean uploadPhoto(CustomCompanyScene customCompanyScene);
 }

@@ -89,6 +89,8 @@ public class CustomCompanyScenePhotoTree implements Serializable {
 
     private Boolean hasChildren;
 
+    private String uploadPath;
+
 //    record FileInfo()
 
     private List<CustomCompanyScenePhotoTree> children;
