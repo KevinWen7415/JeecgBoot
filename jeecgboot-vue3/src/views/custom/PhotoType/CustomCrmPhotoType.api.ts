@@ -6,6 +6,7 @@ const { createConfirm } = useMessage();
 enum Api {
   list = '/custom/customCrmPhotoType/list',
   listTreeAll = '/custom/customCrmPhotoType/listTreeAll',
+  listRoot = '/custom/customCrmPhotoType/listRoot',
   listSub = '/custom/customCrmPhotoType/listSub',
   save='/custom/customCrmPhotoType/add',
   edit='/custom/customCrmPhotoType/edit',
@@ -34,6 +35,7 @@ export const list = (params) => defHttp.get({ url: Api.list, params });
 
 
 export const listTreeAll = (params) => defHttp.get({ url: Api.listTreeAll, params });
+export const listRoot = () => defHttp.get({ url: Api.listRoot });
 
 /**
  * 删除单个

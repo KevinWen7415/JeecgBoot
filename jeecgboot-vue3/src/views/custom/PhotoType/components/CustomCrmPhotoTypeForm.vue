@@ -14,14 +14,24 @@
             <!-- 父级节点（树形下拉框） -->
             <a-col :span="24">
               <a-form-item label="父级节点" v-bind="validateInfos.parentId" id="CustomCrmPhotoTypeForm-parentId" name="parentId">
-                <a-tree-select
+<!--                <a-tree-select-->
+<!--                  v-model:value="formData.parentId"-->
+<!--                  :tree-data="parentTreeData"-->
+<!--                  :field-names="{ value: 'id', label: 'photoTypeName', children: 'children' }"-->
+<!--                  style="width: 100%"-->
+<!--                  placeholder="请选择父级节点"-->
+<!--                  tree-default-expand-all-->
+<!--                />-->
+                <a-select
                   v-model:value="formData.parentId"
-                  :tree-data="parentTreeData"
-                  :field-names="{ value: 'id', label: 'photoTypeName', children: 'children' }"
                   style="width: 100%"
                   placeholder="请选择父级节点"
-                  tree-default-expand-all
-                />
+                  allowClear
+                >
+                  <a-select-option v-for="item in parentTreeData" :key="item.id" :value="item.id">
+                    {{ item.photoTypeName }}
+                  </a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
 
@@ -60,10 +70,11 @@
   import { defHttp } from '/@/utils/http/axios';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { getValueType } from '/@/utils';
-  import { listTreeAll, saveOrUpdate } from '../CustomCrmPhotoType.api';
+  import {listRoot, listTreeAll, saveOrUpdate} from '../CustomCrmPhotoType.api';
   import { Form } from 'ant-design-vue';
   import JFormContainer from '/@/components/Form/src/container/JFormContainer.vue';
   import { TreeSelect } from 'ant-design-vue';
+  import _ from 'lodash-es';
 
   const props = defineProps({
     formDisabled: { type: Boolean, default: false },
@@ -130,6 +141,7 @@
         sortOrder: record.sortOrder ?? 0,
         description: record.description || '',
       };
+      loadParentTreeData();
       Object.assign(formData, tmpData);
     });
   }
@@ -185,7 +197,7 @@
   async function loadParentTreeData() {
     try {
       // 调用实际的API获取树形数据
-      const data = await listTreeAll({}); // 需要实现这个API方法
+      const data = await listRoot(); // 需要实现这个API方法
 
       // 格式化树数据（根据实际数据结构调整）
       const formatTreeData = (data) => {
@@ -194,7 +206,7 @@
           key: item.id,
           title: item.photoTypeName,
           value: item.id,
-          children: item.children ? formatTreeData(item.children) : []
+          children: !_.isEmpty(item.children) ? formatTreeData(item.children) : []
         }));
       };
 
