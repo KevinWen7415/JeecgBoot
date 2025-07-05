@@ -20,8 +20,12 @@ public interface ICustomCrmPhotoTypeService extends IService<CustomCrmPhotoType>
 
     Long countSubs(String pid);
 
+    Long countSubs(String pid, List<String> excludeIds);
+
     List<CustomCrmPhotoTypeTree> listTreeAll(Page<CustomCrmPhotoType> page, QueryWrapper<CustomCrmPhotoType> queryWrapper);
 
     List<CustomCrmPhotoTypeTree> listTreeEnabled();
+
+    List<CustomCrmPhotoTypeTree> listRoot();
 
 }

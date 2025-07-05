@@ -2,6 +2,7 @@ package org.jeecg.modules.demo.custom.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -94,12 +95,21 @@ public class CustomCrmPhotoTypeServiceImpl extends ServiceImpl<CustomCrmPhotoTyp
     }
 
     @Override
-    public Long countSubs(String pid) {
+    public Long countSubs(String pid){
+        return countSubs(pid,null);
+    }
+
+
+    @Override
+    public Long countSubs(String pid, List<String> excludeIds) {
         if (StrUtil.isEmpty(pid)){
             return 0L;
         }
         LambdaQueryWrapper<CustomCrmPhotoType> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(CustomCrmPhotoType::getParentId, pid);
+        if(ArrayUtil.isNotEmpty(excludeIds)){
+            queryWrapper.notIn(CustomCrmPhotoType::getId, excludeIds);
+        }
         return baseMapper.selectCount(queryWrapper);
     }
 
@@ -131,6 +141,16 @@ public class CustomCrmPhotoTypeServiceImpl extends ServiceImpl<CustomCrmPhotoTyp
             return customCrmPhotoTypeTree;
         }).toList();
         return results;
+    }
+
+    @Override
+    public List<CustomCrmPhotoTypeTree> listRoot() {
+        List<CustomCrmPhotoType> topTypes = list(new LambdaQueryWrapper<CustomCrmPhotoType>().eq(CustomCrmPhotoType::getTypeLevel, 0));
+        if (CollUtil.isNotEmpty(topTypes)){
+            List<CustomCrmPhotoTypeTree> topTypeTrees = BeanUtil.copyToList(topTypes, CustomCrmPhotoTypeTree.class);
+            return topTypeTrees;
+        }
+        return List.of();
     }
 
     private CustomCrmPhotoTypeTree findAllChildren(CustomCrmPhotoTypeTree crmPhotoTypeTree) {
@@ -181,7 +201,7 @@ public class CustomCrmPhotoTypeServiceImpl extends ServiceImpl<CustomCrmPhotoTyp
         if (StrUtil.isNotEmpty(parentId)){
             CustomCrmPhotoType parent = getById(parentId);
             if (Objects.nonNull(parent)){
-                Long subCounts = countSubs(parentId);
+                Long subCounts = countSubs(parentId,CollUtil.newArrayList(photoType.getId()));
                 if (NumberUtil.equals(subCounts, Long.valueOf(0L))) {
                     parent.setIsLeaf(true);
                 }

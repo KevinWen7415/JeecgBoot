@@ -90,9 +90,14 @@ public class CustomCrmPhotoTypeController extends JeecgController<CustomCrmPhoto
 		 QueryWrapper<CustomCrmPhotoType> queryWrapper = QueryGenerator.initQueryWrapper(customCrmPhotoType, req.getParameterMap());
 		 Page<CustomCrmPhotoType> page = new Page<CustomCrmPhotoType>(pageNo, pageSize);
 		 List<CustomCrmPhotoTypeTree> treeAll = customCrmPhotoTypeService.listTreeAll(page, queryWrapper);
+		 return Result.OK(treeAll);
+	 }
 
 
-
+	 @Operation(summary="custom_crm_photo_type-分页列表查询")
+	 @GetMapping(value = "/listRoot")
+	 public Result<List<CustomCrmPhotoTypeTree>> listRoot() {
+		 List<CustomCrmPhotoTypeTree> treeAll = customCrmPhotoTypeService.listRoot();
 		 return Result.OK(treeAll);
 	 }
 
